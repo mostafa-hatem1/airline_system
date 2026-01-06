@@ -2,7 +2,7 @@
   "users": [
     {
       "email": "admin@airline.com",
-      "passwordHash": "e1325c6b075c37d4",
+      "passwordHash": "cafc03f3c2ffbe0d",
       "phone": "+1-555-0001",
       "role": "ADMINISTRATOR",
       "userId": "ADM001",

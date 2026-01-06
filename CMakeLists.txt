@@ -11,6 +11,8 @@ add_executable(airline_system
     src/main.cpp
     src/persistence/JsonFile.cpp
     src/persistence/UserRepository.cpp
+    src/persistence/FlightRepository.cpp
+    src/persistence/AircraftRepository.cpp
     src/utils/Role.cpp
     src/utils/ConsoleIO.cpp
     src/utils/PasswordHash.cpp

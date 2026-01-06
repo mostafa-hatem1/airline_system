@@ -1,0 +1,16 @@
+{
+  "aircraft": [
+    {
+      "aircraftType": "Boeing 737",
+      "manufacturer": "Boeing",
+      "status": "Operational",
+      "totalSeats": 180
+    },
+    {
+      "aircraftType": "Airbus A320",
+      "manufacturer": "Airbus",
+      "status": "Operational",
+      "totalSeats": 150
+    }
+  ]
+}

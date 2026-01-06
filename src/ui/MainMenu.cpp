@@ -1,13 +1,19 @@
 #include "MainMenu.hpp"
 #include "../utils/ConsoleIO.hpp"
-#include "../utils/PasswordHash.hpp"
+#include "../managers/AuthService.hpp"
 #include "../utils/Role.hpp"
-#include <algorithm>
+#include "../utils/PasswordHash.hpp"
 #include <iostream>
+#include <iomanip>
+#include <algorithm>
 
 MainMenu::MainMenu(UserRepository& userRepo)
-    : m_userRepo(userRepo) {
+    : m_userRepo(userRepo),
+      m_flightRepo("data/flights.json"),
+      m_aircraftRepo("data/aircraft.json") {
     m_users = m_userRepo.loadAll();
+    m_flights = m_flightRepo.loadAll();
+    m_aircraft = m_aircraftRepo.loadAll();
 }
 
 void MainMenu::run() {
@@ -17,17 +23,12 @@ void MainMenu::run() {
         int roleChoice = showRoleSelection();
 
         if (roleChoice == 0) {
-            std::cout << "Exiting system. Goodbye!\n";
-            // Save any changes before exit
+            std::cout << "Exiting system. Saving data and goodbye!\n";
             m_userRepo.saveAll(m_users);
+            m_flightRepo.saveAll(m_flights);
+            m_aircraftRepo.saveAll(m_aircraft);
             break;
         }
-        if (roleChoice == 98) {
-            resetUserPasswordByUsername();
-            continue;
-        }
-
-
 
         handleLogin(roleChoice);
     }
@@ -40,11 +41,20 @@ int MainMenu::showRoleSelection() {
     std::cout << "3. Passenger\n";
     std::cout << "0. Exit\n";
 
-    // hidden utility command (don’t display)
     return ConsoleIO::readIntInRange("Enter choice: ", 0, 99);
 }
 
 void MainMenu::handleLogin(int roleChoice) {
+    if (roleChoice == 98) {
+        resetUserPasswordByUsername();
+        return;
+    }
+
+    if (roleChoice == 99) {
+        resetAdminPassword();
+        return;
+    }
+
     std::string roleStr;
     if (roleChoice == 1) {
         roleStr = "ADMINISTRATOR";
@@ -62,7 +72,6 @@ void MainMenu::handleLogin(int roleChoice) {
 
     AuthService authService(m_users);
 
-    // Retry loop: allow user to retry login 3 times
     int attempts = 3;
     while (attempts > 0) {
         std::string username = ConsoleIO::readLine("Username: ");
@@ -71,7 +80,6 @@ void MainMenu::handleLogin(int roleChoice) {
         auto user = authService.login(username, password);
 
         if (user) {
-            // Verify the user has the correct role for this login flow
             if (user->role != roleStr) {
                 std::cout << "Error: Your account is not an " << roleStr << " account.\n";
                 attempts--;
@@ -83,7 +91,6 @@ void MainMenu::handleLogin(int roleChoice) {
 
             std::cout << "\nLogin successful!\n\n";
 
-            // Route to appropriate menu
             if (roleChoice == 1) {
                 showAdminMenu(user.value());
             } else if (roleChoice == 2) {
@@ -117,7 +124,7 @@ void MainMenu::showAdminMenu(const UserRecord& adminUser) {
         int choice = ConsoleIO::readIntInRange("Enter choice: ", 1, 5);
 
         if (choice == 1) {
-            std::cout << "\n[Manage Flights - Not implemented yet]\n";
+            showManageFlightsMenu();
         } else if (choice == 2) {
             std::cout << "\n[Manage Aircraft - Not implemented yet]\n";
         } else if (choice == 3) {
@@ -129,6 +136,120 @@ void MainMenu::showAdminMenu(const UserRecord& adminUser) {
             break;
         }
     }
+}
+
+void MainMenu::showManageFlightsMenu() {
+    while (true) {
+        std::cout << "\n--- Manage Flights ---\n";
+        std::cout << "1. Add New Flight\n";
+        std::cout << "2. Update Existing Flight\n";
+        std::cout << "3. Remove Flight\n";
+        std::cout << "4. View All Flights\n";
+        std::cout << "5. Back to Main Menu\n";
+
+        int choice = ConsoleIO::readIntInRange("Enter choice: ", 1, 5);
+
+        if (choice == 1) {
+            addNewFlight();
+        } else if (choice == 2) {
+            std::cout << "\n[Update Existing Flight - Not implemented yet]\n";
+        } else if (choice == 3) {
+            std::cout << "\n[Remove Flight - Not implemented yet]\n";
+        } else if (choice == 4) {
+            viewAllFlights();
+        } else if (choice == 5) {
+            break;
+        }
+    }
+}
+
+void MainMenu::addNewFlight() {
+    std::cout << "\n--- Add New Flight ---\n";
+
+    std::string flightNumber = ConsoleIO::readLine("Enter Flight Number: ");
+    if (flightNumber.empty()) {
+        std::cout << "Error: Flight number cannot be empty.\n";
+        return;
+    }
+
+    // Check for duplicate
+    if (m_flightRepo.findByFlightNumber(flightNumber, m_flights)) {
+        std::cout << "Error: Flight " << flightNumber << " already exists.\n";
+        return;
+    }
+
+    std::string origin = ConsoleIO::readLine("Enter Origin: ");
+    std::string destination = ConsoleIO::readLine("Enter Destination: ");
+    std::string departureDateTime = ConsoleIO::readLine("Enter Departure Date and Time (YYYY-MM-DD HHMM): ");
+    std::string arrivalDateTime = ConsoleIO::readLine("Enter Arrival Date and Time (YYYY-MM-DD HHMM): ");
+    std::string aircraftType = ConsoleIO::readLine("Enter Aircraft Type: ");
+
+    int totalSeats = ConsoleIO::readIntInRange("Enter Total Seats: ", 1, 1000);
+
+    std::cout << "Enter Status (Scheduled/Delayed/Canceled): ";
+    std::string status = ConsoleIO::readLine("");
+    if (status != "Scheduled" && status != "Delayed" && status != "Canceled") {
+        std::cout << "Error: Status must be Scheduled, Delayed, or Canceled.\n";
+        return;
+    }
+
+    // Create flight record
+    FlightRecord newFlight(
+        flightNumber,
+        origin,
+        destination,
+        departureDateTime,
+        arrivalDateTime,
+        aircraftType,
+        totalSeats,
+        status
+    );
+
+    m_flights.push_back(newFlight);
+
+    try {
+        m_flightRepo.saveAll(m_flights);
+        std::cout << "\nFlight " << flightNumber << " has been successfully added to the schedule.\n";
+    } catch (const std::exception& e) {
+        std::cout << "Error: Failed to save flight: " << e.what() << "\n";
+        m_flights.pop_back();  // Rollback
+    }
+}
+
+void MainMenu::viewAllFlights() {
+    if (m_flights.empty()) {
+        std::cout << "\nNo flights scheduled.\n";
+        return;
+    }
+
+    std::cout << "\n--- All Flights ---\n";
+    std::cout << std::string(130, '-') << "\n";
+    std::cout << std::left
+              << std::setw(12) << "Flight #"
+              << std::setw(20) << "Origin"
+              << std::setw(20) << "Destination"
+              << std::setw(18) << "Departure"
+              << std::setw(18) << "Arrival"
+              << std::setw(15) << "Aircraft"
+              << std::setw(8) << "Seats"
+              << std::setw(12) << "Status"
+              << "\n";
+    std::cout << std::string(130, '-') << "\n";
+
+    for (const auto& flight : m_flights) {
+        std::cout << std::left
+                  << std::setw(12) << flight.flightNumber
+                  << std::setw(20) << flight.origin
+                  << std::setw(20) << flight.destination
+                  << std::setw(18) << flight.departureDateTime
+                  << std::setw(18) << flight.arrivalDateTime
+                  << std::setw(15) << flight.aircraftType
+                  << std::setw(8) << flight.totalSeats
+                  << std::setw(12) << flight.status
+                  << "\n";
+    }
+
+    std::cout << std::string(130, '-') << "\n";
 }
 
 void MainMenu::showAgentMenu(const UserRecord& agentUser) {
@@ -179,6 +300,45 @@ void MainMenu::showPassengerMenu(const UserRecord& passengerUser) {
             std::cout << "\nLogging out...\n";
             break;
         }
+    }
+}
+
+void MainMenu::resetAdminPassword() {
+    std::cout << "\n--- Utility: Reset Admin Password ---\n";
+
+    auto it = std::find_if(m_users.begin(), m_users.end(),
+                           [](const UserRecord& u) {
+                               return u.role == "ADMINISTRATOR" && u.username == "adminUser";
+                           });
+
+    if (it == m_users.end()) {
+        it = std::find_if(m_users.begin(), m_users.end(),
+                          [](const UserRecord& u) {
+                              return u.role == "ADMINISTRATOR";
+                          });
+    }
+
+    if (it == m_users.end()) {
+        std::cout << "Error: No administrator account found in users.json\n";
+        return;
+    }
+
+    std::cout << "Admin account found: userId=" << it->userId
+              << ", username=" << it->username << "\n";
+
+    const std::string newPw = ConsoleIO::readLine("Enter new admin password (plain text): ");
+    if (newPw.empty()) {
+        std::cout << "Error: Password cannot be empty.\n";
+        return;
+    }
+
+    it->passwordHash = PasswordHash::hash(newPw);
+
+    try {
+        m_userRepo.saveAll(m_users);
+        std::cout << "Success: Admin password has been reset and saved.\n";
+    } catch (const std::exception& e) {
+        std::cout << "Error: Failed to save users.json: " << e.what() << "\n";
     }
 }
 
