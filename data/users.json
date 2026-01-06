@@ -1,0 +1,28 @@
+{
+  "users": [
+    {
+      "email": "admin@airline.com",
+      "passwordHash": "e1325c6b075c37d4",
+      "phone": "+1-555-0001",
+      "role": "ADMINISTRATOR",
+      "userId": "ADM001",
+      "username": "adminUser"
+    },
+    {
+      "email": "jane@airline.com",
+      "passwordHash": "f2f961b0f847ec5",
+      "phone": "+1-555-0002",
+      "role": "BOOKING_AGENT",
+      "userId": "BA001",
+      "username": "agentJane"
+    },
+    {
+      "email": "mike@example.com",
+      "passwordHash": "be325a4125bc6b30",
+      "phone": "+1-555-0456",
+      "role": "PASSENGER",
+      "userId": "P456",
+      "username": "passengerMike"
+    }
+  ]
+}
