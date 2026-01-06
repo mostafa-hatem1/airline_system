@@ -39,6 +39,7 @@ std::vector<FlightRecord> FlightRepository::loadAll() {
             flight.aircraftType = flightJson.value("aircraftType", "");
             flight.totalSeats = flightJson.value("totalSeats", 0);
             flight.status = flightJson.value("status", "");
+            flight.price = flightJson.value("price", 250.00);
 
             flights.push_back(flight);
         }
@@ -66,6 +67,7 @@ void FlightRepository::saveAll(const std::vector<FlightRecord>& flights) {
         flightJson["aircraftType"] = flight.aircraftType;
         flightJson["totalSeats"] = flight.totalSeats;
         flightJson["status"] = flight.status;
+        flightJson["price"] = flight.price;
 
         data["flights"].push_back(flightJson);
     }

@@ -1,51 +1,67 @@
 #ifndef MAIN_MENU_H
 #define MAIN_MENU_H
 
+#include "../core/UserRecord.hpp"
+#include "../core/FlightRecord.hpp"
+#include "../core/AircraftRecord.hpp"
+#include "../core/ReservationRecord.hpp"
+
 #include "../persistence/UserRepository.hpp"
 #include "../persistence/FlightRepository.hpp"
 #include "../persistence/AircraftRepository.hpp"
-#include <vector>
+#include "../persistence/ReservationRepository.hpp"
 
-/**
- * @brief Main menu and role selection orchestrator.
- */
+#include "../managers/AuthService.hpp"
+#include "../managers/BookingService.hpp"
+
+#include <vector>
+#include <string>
+
 class MainMenu {
 public:
-    /**
-     * @brief Constructor.
-     * 
-     * @param userRepo The user repository for persistence.
-     */
     explicit MainMenu(UserRepository& userRepo);
 
-    /**
-     * @brief Run the main menu loop (role selection → login → role menu → logout).
-     */
     void run();
 
 private:
+    // Persistence
     UserRepository& m_userRepo;
     FlightRepository m_flightRepo;
     AircraftRepository m_aircraftRepo;
-    
+    ReservationRepository m_reservationRepo;
+
+    // In-memory data
     std::vector<UserRecord> m_users;
     std::vector<FlightRecord> m_flights;
     std::vector<AircraftRecord> m_aircraft;
+    std::vector<ReservationRecord> m_reservations;
 
+    // Services
+    BookingService m_bookingService;
+
+    // Main flow
     int showRoleSelection();
     void handleLogin(int roleChoice);
+
+    // Role menus
     void showAdminMenu(const UserRecord& adminUser);
     void showAgentMenu(const UserRecord& agentUser);
     void showPassengerMenu(const UserRecord& passengerUser);
 
-    // Admin sub-menus
+    // Admin: Flight management (implemented in previous phase)
     void showManageFlightsMenu();
     void addNewFlight();
     void viewAllFlights();
 
-    // Utility
+    // Booking flow entry points
+    void runBookingFlow(const UserRecord& user);
+
+    // Utility commands (hidden)
     void resetAdminPassword();
     void resetUserPasswordByUsername();
+
+    // Save everything
+    void saveAll();
 };
 
 #endif // MAIN_MENU_H

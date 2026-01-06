@@ -1,0 +1,28 @@
+{
+  "reservations": [
+    {
+      "bookingDateTime": "2026-01-06 18:00:06",
+      "flightNumber": "BA456",
+      "passengerID": "P456",
+      "passengerName": "passengerMike",
+      "paymentDetails": "XXXX-XXXX-XXXX-5656",
+      "paymentMethod": "Credit Card",
+      "reservationID": "R002",
+      "seatNumber": "1A",
+      "status": "Confirmed",
+      "totalCost": 250.0
+    },
+    {
+      "bookingDateTime": "2026-01-06 18:01:54",
+      "flightNumber": "AA789",
+      "passengerID": "P456",
+      "passengerName": "passengerMike",
+      "paymentDetails": "Cash",
+      "paymentMethod": "Cash",
+      "reservationID": "R003",
+      "seatNumber": "13A",
+      "status": "Confirmed",
+      "totalCost": 300.0
+    }
+  ]
+}

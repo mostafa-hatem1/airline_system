@@ -10,7 +10,7 @@
     },
     {
       "email": "jane@airline.com",
-      "passwordHash": "f2f961b0f847ec5",
+      "passwordHash": "e7b18512580e6a97",
       "phone": "+1-555-0002",
       "role": "BOOKING_AGENT",
       "userId": "BA001",
@@ -18,7 +18,7 @@
     },
     {
       "email": "mike@example.com",
-      "passwordHash": "be325a4125bc6b30",
+      "passwordHash": "31b4f5894d8e32b6",
       "phone": "+1-555-0456",
       "role": "PASSENGER",
       "userId": "P456",

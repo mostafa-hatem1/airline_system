@@ -7,6 +7,29 @@
       "destination": "Los Angeles LAX",
       "flightNumber": "AA123",
       "origin": "New York JFK",
+      "price": 250.0,
+      "status": "Scheduled",
+      "totalSeats": 180
+    },
+    {
+      "aircraftType": "Airbus A320",
+      "arrivalDateTime": "2023-12-20 1330",
+      "departureDateTime": "2023-12-20 0900",
+      "destination": "Miami MIA",
+      "flightNumber": "BA456",
+      "origin": "Chicago ORD",
+      "price": 250.0,
+      "status": "Scheduled",
+      "totalSeats": 150
+    },
+    {
+      "aircraftType": "Boeing 737",
+      "arrivalDateTime": "2023-12-20 2015",
+      "departureDateTime": "2023-12-20 1545",
+      "destination": "Miami MIA",
+      "flightNumber": "AA789",
+      "origin": "Chicago ORD",
+      "price": 300.0,
       "status": "Scheduled",
       "totalSeats": 180
     }

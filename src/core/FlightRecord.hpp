@@ -18,7 +18,7 @@ struct FlightRecord {
     std::string aircraftType;           // e.g., "Boeing 737"
     int totalSeats;                     // e.g., 180
     std::string status;                 // "Scheduled", "Delayed", or "Canceled"
-
+    double price;                       // e.g., 299.99
     FlightRecord() = default;
 
     FlightRecord(
@@ -29,10 +29,11 @@ struct FlightRecord {
         const std::string& arrv,
         const std::string& aircraft,
         int seats,
-        const std::string& stat
+        const std::string& stat,
+        double p = 250.00
     ) : flightNumber(number), origin(orig), destination(dest),
         departureDateTime(dept), arrivalDateTime(arrv),
-        aircraftType(aircraft), totalSeats(seats), status(stat) {}
+        aircraftType(aircraft), totalSeats(seats), status(stat), price(p) {}
 };
 
 #endif // FLIGHT_RECORD_HPP
