@@ -1,16 +1,34 @@
 {
   "aircraft": [
     {
+      "aircraftID": "",
       "aircraftType": "Boeing 737",
+      "lastMaintenanceDate": "",
+      "manufactureYear": "",
       "manufacturer": "Boeing",
+      "nextMaintenanceDate": "",
       "status": "Operational",
       "totalSeats": 180
     },
     {
+      "aircraftID": "",
       "aircraftType": "Airbus A320",
+      "lastMaintenanceDate": "",
+      "manufactureYear": "",
       "manufacturer": "Airbus",
+      "nextMaintenanceDate": "",
       "status": "Operational",
       "totalSeats": 150
+    },
+    {
+      "aircraftID": "AC001",
+      "aircraftType": "Airbus 898",
+      "lastMaintenanceDate": "N/A",
+      "manufactureYear": "2017",
+      "manufacturer": "Airbus",
+      "nextMaintenanceDate": "2025-01-30",
+      "status": "Available",
+      "totalSeats": 200
     }
   ]
 }

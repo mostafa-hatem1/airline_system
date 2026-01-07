@@ -31,10 +31,14 @@ std::vector<AircraftRecord> AircraftRepository::loadAll() {
 
         for (const auto& aircraftJson : data["aircraft"]) {
             AircraftRecord ac;
+            ac.aircraftID = aircraftJson.value("aircraftID", "");
             ac.aircraftType = aircraftJson.value("aircraftType", "");
             ac.totalSeats = aircraftJson.value("totalSeats", 0);
             ac.manufacturer = aircraftJson.value("manufacturer", "");
             ac.status = aircraftJson.value("status", "");
+            ac.manufactureYear = aircraftJson.value("manufactureYear", "");
+            ac.nextMaintenanceDate = aircraftJson.value("nextMaintenanceDate", "");
+            ac.lastMaintenanceDate = aircraftJson.value("lastMaintenanceDate", "");
 
             aircraft.push_back(ac);
         }
@@ -54,10 +58,14 @@ void AircraftRepository::saveAll(const std::vector<AircraftRecord>& aircraft) {
 
     for (const auto& ac : aircraft) {
         json aircraftJson;
+        aircraftJson["aircraftID"] = ac.aircraftID;
         aircraftJson["aircraftType"] = ac.aircraftType;
         aircraftJson["totalSeats"] = ac.totalSeats;
         aircraftJson["manufacturer"] = ac.manufacturer;
         aircraftJson["status"] = ac.status;
+        aircraftJson["manufactureYear"] = ac.manufactureYear;
+        aircraftJson["nextMaintenanceDate"] = ac.nextMaintenanceDate;
+        aircraftJson["lastMaintenanceDate"] = ac.lastMaintenanceDate;
 
         data["aircraft"].push_back(aircraftJson);
     }
@@ -71,13 +79,13 @@ void AircraftRepository::saveAll(const std::vector<AircraftRecord>& aircraft) {
     }
 }
 
-std::optional<AircraftRecord> AircraftRepository::findByType(
-    const std::string& aircraftType,
+std::optional<AircraftRecord> AircraftRepository::findByID(
+    const std::string& aircraftID,
     const std::vector<AircraftRecord>& aircraft
 ) {
     auto it = std::find_if(aircraft.begin(), aircraft.end(),
                            [&](const AircraftRecord& a) {
-                               return a.aircraftType == aircraftType;
+                               return a.aircraftID == aircraftID;
                            });
     return (it != aircraft.end()) ? std::optional(*it) : std::nullopt;
 }

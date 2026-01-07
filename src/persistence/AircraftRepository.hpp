@@ -41,8 +41,8 @@ public:
      * @param aircraft The vector to search in.
      * @return The aircraft record if found; std::nullopt otherwise.
      */
-    std::optional<AircraftRecord> findByType(
-        const std::string& aircraftType,
+    std::optional<AircraftRecord> findByID(
+        const std::string& aircraftID,
         const std::vector<AircraftRecord>& aircraft
     );
 

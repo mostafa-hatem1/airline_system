@@ -1,0 +1,13 @@
+{
+  "flight_crew": [
+    {
+      "assignmentDate": "",
+      "attendantIDs": [
+        "FA001",
+        "FA002"
+      ],
+      "flightNumber": "BA456",
+      "pilotID": "PL001"
+    }
+  ]
+}

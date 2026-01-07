@@ -1,6 +1,7 @@
 #include "MainMenu.hpp"
 
 #include "../ui/BookingUI.hpp"
+#include "../ui/ReservationUI.hpp"
 
 #include "../utils/ConsoleIO.hpp"
 #include "../utils/PasswordHash.hpp"
@@ -14,12 +15,18 @@ MainMenu::MainMenu(UserRepository& userRepo)
     : m_userRepo(userRepo),
       m_flightRepo("data/flights.json"),
       m_aircraftRepo("data/aircraft.json"),
-      m_reservationRepo("data/reservations.json") {
+      m_reservationRepo("data/reservations.json"),
+      m_crewRepo("data/crew.json"),
+      m_maintenanceRepo("data/maintenance.json"),
+      m_flightCrewRepo("data/flight_crew.json") {
     // Load everything
     m_users = m_userRepo.loadAll();
     m_flights = m_flightRepo.loadAll();
     m_aircraft = m_aircraftRepo.loadAll();
     m_reservations = m_reservationRepo.loadAll();
+    m_crew = m_crewRepo.loadAll();
+    m_maintenance = m_maintenanceRepo.loadAll();
+    m_flightCrew = m_flightCrewRepo.loadAll();
 
     // Initialize seat maps based on existing reservations
     m_bookingService.initializeSeats(m_flights, m_reservations);
@@ -55,10 +62,6 @@ int MainMenu::showRoleSelection() {
 }
 
 void MainMenu::handleLogin(int roleChoice) {
-    if (roleChoice == 99) {
-        resetAdminPassword();
-        return;
-    }
     if (roleChoice == 98) {
         resetUserPasswordByUsername();
         return;
@@ -125,32 +128,48 @@ void MainMenu::handleLogin(int roleChoice) {
     }
 }
 
-void MainMenu::showAdminMenu(const UserRecord& /*adminUser*/) {
+void MainMenu::showAdminMenu(const UserRecord& adminUser) {
     std::cout << "--- Administrator Menu ---\n";
 
     while (true) {
         std::cout << "\n1. Manage Flights\n";
         std::cout << "2. Manage Aircraft\n";
         std::cout << "3. Manage Users\n";
-        std::cout << "4. Generate Reports\n";
-        std::cout << "5. Logout\n";
+        std::cout << "4. Flight Operations\n";
+        std::cout << "5. Generate Reports\n";
+        std::cout << "6. Logout\n";
 
-        const int choice = ConsoleIO::readIntInRange("Enter choice: ", 1, 5);
+        const int choice = ConsoleIO::readIntInRange("Enter choice: ", 1, 6);
 
         if (choice == 1) {
             showManageFlightsMenu();
         } else if (choice == 2) {
-            std::cout << "\n[Manage Aircraft - Not implemented yet]\n";
+            AircraftManagementUI aircraftMgmt(m_aircraftRepo);
+            aircraftMgmt.showAircraftManagementMenu();
+            m_aircraft = m_aircraftRepo.loadAll();
         } else if (choice == 3) {
-            std::cout << "\n[Manage Users - Not implemented yet]\n";
+            UserManagementUI userMgmt(m_userRepo);
+            userMgmt.showUserManagementMenu();
+            m_users = m_userRepo.loadAll();  // Reload after changes
         } else if (choice == 4) {
-            std::cout << "\n[Generate Reports - Not implemented yet]\n";
+            FlightOperationsUI flightOps(
+                m_flights, m_crew, m_maintenance, m_flightCrew, m_aircraft,
+                m_flightRepo, m_crewRepo, m_maintenanceRepo, m_flightCrewRepo, m_aircraftRepo
+            );
+            flightOps.showFlightOperationsMenu();
+            m_crew = m_crewRepo.loadAll();
+            m_maintenance = m_maintenanceRepo.loadAll();
+            m_flightCrew = m_flightCrewRepo.loadAll();
+        } else if (choice == 5) {
+            ReportingUI reporting(m_flights, m_reservations, m_maintenance, m_users);
+            reporting.showReportingMenu();
         } else {
             std::cout << "\nLogging out...\n";
             return;
         }
     }
 }
+
 
 void MainMenu::showManageFlightsMenu() {
     while (true) {
@@ -309,9 +328,11 @@ void MainMenu::showAgentMenu(const UserRecord& agentUser) {
         } else if (choice == 2) {
             runBookingFlow(agentUser);
         } else if (choice == 3) {
-            std::cout << "\n[Modify Reservation - Not implemented yet]\n";
+            ReservationUI resUI(m_flights, m_reservations, m_flightRepo, m_reservationRepo, m_bookingService);
+            resUI.modifyReservation();
         } else if (choice == 4) {
-            std::cout << "\n[Cancel Reservation - Not implemented yet]\n";
+            ReservationUI resUI(m_flights, m_reservations, m_flightRepo, m_reservationRepo, m_bookingService);
+            resUI.cancelReservation();
         } else {
             std::cout << "\nLogging out...\n";
             return;
@@ -333,9 +354,11 @@ void MainMenu::showPassengerMenu(const UserRecord& passengerUser) {
         if (choice == 1) {
             runBookingFlow(passengerUser);
         } else if (choice == 2) {
-            std::cout << "\n[View My Reservations - Not implemented yet]\n";
+            ReservationUI resUI(m_flights, m_reservations, m_flightRepo, m_reservationRepo, m_bookingService);
+            resUI.showMyReservations(passengerUser);
         } else if (choice == 3) {
-            std::cout << "\n[Check-In - Not implemented yet]\n";
+            ReservationUI resUI(m_flights, m_reservations, m_flightRepo, m_reservationRepo, m_bookingService);
+            resUI.checkIn(passengerUser);
         } else {
             std::cout << "\nLogging out...\n";
             return;
@@ -460,5 +483,23 @@ void MainMenu::saveAll() {
         m_reservationRepo.saveAll(m_reservations);
     } catch (const std::exception& e) {
         std::cout << "Warning: Failed to save reservations: " << e.what() << "\n";
+    }
+
+    try {
+        m_crewRepo.saveAll(m_crew);
+    } catch (const std::exception& e) {
+        std::cout << "Warning: Failed to save crew: " << e.what() << "\n";
+    }
+
+    try {
+        m_maintenanceRepo.saveAll(m_maintenance);
+    } catch (const std::exception& e) {
+        std::cout << "Warning: Failed to save maintenance: " << e.what() << "\n";
+    }
+
+    try {
+        m_flightCrewRepo.saveAll(m_flightCrew);
+    } catch (const std::exception& e) {
+        std::cout << "Warning: Failed to save flight crew: " << e.what() << "\n";
     }
 }

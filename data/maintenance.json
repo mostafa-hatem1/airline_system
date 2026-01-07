@@ -1,0 +1,24 @@
+{
+  "maintenance": [
+    {
+      "aircraftType": "Boeing 737",
+      "description": "Routine Maintenance",
+      "endDate": "2026-01-27",
+      "estimatedCost": 400.0,
+      "maintenanceID": "M001",
+      "maintenanceType": "Scheduled",
+      "startDate": "2026-01-25",
+      "status": "Scheduled"
+    },
+    {
+      "aircraftType": "Boeing 737",
+      "description": "Faulty left phalange",
+      "endDate": "",
+      "estimatedCost": 0.0,
+      "maintenanceID": "M002",
+      "maintenanceType": "Emergency",
+      "startDate": "2025-01-05",
+      "status": "Scheduled"
+    }
+  ]
+}

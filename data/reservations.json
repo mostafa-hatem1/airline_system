@@ -9,7 +9,7 @@
       "paymentMethod": "Credit Card",
       "reservationID": "R002",
       "seatNumber": "1A",
-      "status": "Confirmed",
+      "status": "Canceled",
       "totalCost": 250.0
     },
     {
@@ -20,7 +20,7 @@
       "paymentDetails": "Cash",
       "paymentMethod": "Cash",
       "reservationID": "R003",
-      "seatNumber": "13A",
+      "seatNumber": "14A",
       "status": "Confirmed",
       "totalCost": 300.0
     }

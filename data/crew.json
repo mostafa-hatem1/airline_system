@@ -1,0 +1,40 @@
+{
+  "crew": [
+    {
+      "crewID": "PL001",
+      "currentFlightHours": 45.0,
+      "lastAssignment": "",
+      "maxFlightHours": 100.0,
+      "name": "Captain Sarah Connor",
+      "role": "Pilot",
+      "status": "Available"
+    },
+    {
+      "crewID": "PL002",
+      "currentFlightHours": 60.0,
+      "lastAssignment": "",
+      "maxFlightHours": 100.0,
+      "name": "Captain James Kirk",
+      "role": "Pilot",
+      "status": "Available"
+    },
+    {
+      "crewID": "FA001",
+      "currentFlightHours": 30.0,
+      "lastAssignment": "",
+      "maxFlightHours": 120.0,
+      "name": "Emma Watson",
+      "role": "Attendant",
+      "status": "Available"
+    },
+    {
+      "crewID": "FA002",
+      "currentFlightHours": 20.0,
+      "lastAssignment": "",
+      "maxFlightHours": 120.0,
+      "name": "John Cena",
+      "role": "Attendant",
+      "status": "Available"
+    }
+  ]
+}

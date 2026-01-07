@@ -14,6 +14,9 @@ add_executable(airline_system
     src/persistence/FlightRepository.cpp
     src/persistence/AircraftRepository.cpp
     src/persistence/ReservationRepository.cpp
+    src/persistence/CrewRepository.cpp
+    src/persistence/MaintenanceRepository.cpp
+    src/persistence/FlightCrewRepository.cpp
     src/core/SeatMap.cpp
     src/utils/Role.cpp
     src/utils/ConsoleIO.cpp
@@ -23,6 +26,11 @@ add_executable(airline_system
     src/managers/BookingService.cpp
     src/ui/MainMenu.cpp
     src/ui/BookingUI.cpp
+    src/ui/ReservationUI.cpp
+    src/ui/UserManagementUI.cpp
+    src/ui/FlightOperationsUI.cpp
+    src/ui/ReportingUI.cpp
+    src/ui/AircraftManagementUI.cpp
 )
 
 target_link_libraries(airline_system PRIVATE nlohmann_json::nlohmann_json)
