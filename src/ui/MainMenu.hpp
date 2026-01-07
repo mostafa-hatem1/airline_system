@@ -74,6 +74,9 @@ private:
     void addNewFlight();
     void viewAllFlights();
     void searchFlightsUI();
+    void updateExistingFlight();
+    void removeFlight();
+
 
     // Booking flow entry points
     void runBookingFlow(const UserRecord& user);

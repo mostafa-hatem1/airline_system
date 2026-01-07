@@ -32,6 +32,17 @@
       "price": 300.0,
       "status": "Scheduled",
       "totalSeats": 180
+    },
+    {
+      "aircraftType": "Boeing 737",
+      "arrivalDateTime": "2025-01-32",
+      "departureDateTime": "2025-01-25",
+      "destination": "Cairo CIA",
+      "flightNumber": "A456",
+      "origin": "London Heathrow",
+      "price": 400.0,
+      "status": "Scheduled",
+      "totalSeats": 400
     }
   ]
 }

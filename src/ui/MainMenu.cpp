@@ -170,6 +170,98 @@ void MainMenu::showAdminMenu(const UserRecord& adminUser) {
     }
 }
 
+void MainMenu::updateExistingFlight() {
+    std::cout << "\n--- Update Existing Flight ---\n";
+    const std::string flightNo = ConsoleIO::readLine("Enter Flight Number to Update: ");
+
+    auto it = std::find_if(m_flights.begin(), m_flights.end(),
+                           [&](const FlightRecord& f) { return f.flightNumber == flightNo; });
+
+    if (it == m_flights.end()) {
+        std::cout << "Error: Flight not found.\n";
+        return;
+    }
+
+    std::cout << "\nSelect information to update:\n";
+    std::cout << "1. Origin\n";
+    std::cout << "2. Destination\n";
+    std::cout << "3. Departure Date/Time\n";
+    std::cout << "4. Arrival Date/Time\n";
+    std::cout << "5. Aircraft Type\n";
+    std::cout << "6. Total Seats\n";
+    std::cout << "7. Status\n";
+    std::cout << "8. Price\n";
+    std::cout << "9. Back\n";
+
+    const int choice = ConsoleIO::readIntInRange("Enter choice: ", 1, 9);
+    if (choice == 9) return;
+
+    if (choice == 1) it->origin = ConsoleIO::readLine("Enter new Origin: ");
+    else if (choice == 2) it->destination = ConsoleIO::readLine("Enter new Destination: ");
+    else if (choice == 3) it->departureDateTime = ConsoleIO::readLine("Enter new Departure (YYYY-MM-DD HHMM): ");
+    else if (choice == 4) it->arrivalDateTime = ConsoleIO::readLine("Enter new Arrival (YYYY-MM-DD HHMM): ");
+    else if (choice == 5) it->aircraftType = ConsoleIO::readLine("Enter new Aircraft Type: ");
+    else if (choice == 6) it->totalSeats = ConsoleIO::readIntInRange("Enter new Total Seats: ", 1, 1000);
+    else if (choice == 7) {
+        std::cout << "Enter Status (Scheduled/Delayed/Canceled): ";
+        it->status = ConsoleIO::readLine("");
+    }
+    else if (choice == 8) {
+        const std::string priceStr = ConsoleIO::readLine("Enter new Price: ");
+        try { it->price = std::stod(priceStr); }
+        catch (...) { std::cout << "Error: Invalid price.\n"; return; }
+    }
+
+    try {
+        m_flightRepo.saveAll(m_flights);
+        std::cout << "Flight " << flightNo << " updated successfully.\n";
+    } catch (const std::exception& e) {
+        std::cout << "Error: Failed to save flights: " << e.what() << "\n";
+    }
+}
+
+void MainMenu::removeFlight() {
+    std::cout << "\n--- Remove Flight ---\n";
+    const std::string flightNo = ConsoleIO::readLine("Enter Flight Number to Remove: ");
+
+    auto it = std::find_if(m_flights.begin(), m_flights.end(),
+                           [&](const FlightRecord& f) { return f.flightNumber == flightNo; });
+
+    if (it == m_flights.end()) {
+        std::cout << "Error: Flight not found.\n";
+        return;
+    }
+
+    std::cout << "Are you sure you want to remove Flight " << flightNo << "? (yes/no): ";
+    const std::string confirm = ConsoleIO::readLine("");
+
+    if (confirm != "yes") {
+        std::cout << "Removal aborted.\n";
+        return;
+    }
+
+    // Safety: prevent deleting flight that has confirmed/checked-in reservations
+    const bool hasActiveReservations = std::any_of(m_reservations.begin(), m_reservations.end(),
+        [&](const ReservationRecord& r) {
+            return r.flightNumber == flightNo && (r.status == "Confirmed" || r.status == "CheckedIn");
+        });
+
+    if (hasActiveReservations) {
+        std::cout << "Error: Cannot remove flight with active reservations.\n";
+        return;
+    }
+
+    m_flights.erase(it);
+
+    try {
+        m_flightRepo.saveAll(m_flights);
+        std::cout << "Flight " << flightNo << " removed successfully.\n";
+    } catch (const std::exception& e) {
+        std::cout << "Error: Failed to save flights: " << e.what() << "\n";
+    }
+}
+
+
 
 void MainMenu::showManageFlightsMenu() {
     while (true) {
@@ -185,9 +277,9 @@ void MainMenu::showManageFlightsMenu() {
         if (choice == 1) {
             addNewFlight();
         } else if (choice == 2) {
-            std::cout << "\n[Update Existing Flight - Not implemented yet]\n";
+            updateExistingFlight();
         } else if (choice == 3) {
-            std::cout << "\n[Remove Flight - Not implemented yet]\n";
+            removeFlight();
         } else if (choice == 4) {
             viewAllFlights();
         } else {
