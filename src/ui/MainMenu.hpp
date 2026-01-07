@@ -27,6 +27,7 @@
 
 #include "../managers/AuthService.hpp"
 #include "../managers/BookingService.hpp"
+#include "../managers/FlightSearchService.hpp"
 
 #include <vector>
 #include <string>
@@ -72,6 +73,7 @@ private:
     void showManageFlightsMenu();
     void addNewFlight();
     void viewAllFlights();
+    void searchFlightsUI();
 
     // Booking flow entry points
     void runBookingFlow(const UserRecord& user);

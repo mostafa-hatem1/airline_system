@@ -311,6 +311,56 @@ void MainMenu::viewAllFlights() {
     std::cout << std::string(150, '-') << "\n";
 }
 
+static void printFlightsTable(const std::vector<FlightRecord>& flights) {
+    if (flights.empty()) {
+        std::cout << "No flights found matching your criteria.\n";
+        return;
+    }
+
+    std::cout << "\nFlights\n";
+    std::cout << std::string(140, '-') << "\n";
+    std::cout << std::left
+              << std::setw(3)  << "#"
+              << std::setw(12) << "Flight"
+              << std::setw(20) << "Origin"
+              << std::setw(20) << "Destination"
+              << std::setw(18) << "Departure"
+              << std::setw(18) << "Arrival"
+              << std::setw(15) << "Aircraft"
+              << std::setw(10) << "Seats"
+              << std::setw(10) << "Price"
+              << std::setw(12) << "Status"
+              << "\n";
+    std::cout << std::string(140, '-') << "\n";
+
+    int idx = 1;
+    for (const auto& f : flights) {
+        std::cout << std::left
+                  << std::setw(3)  << idx++
+                  << std::setw(12) << f.flightNumber
+                  << std::setw(20) << f.origin
+                  << std::setw(20) << f.destination
+                  << std::setw(18) << f.departureDateTime
+                  << std::setw(18) << f.arrivalDateTime
+                  << std::setw(15) << f.aircraftType
+                  << std::setw(10) << f.totalSeats
+                  << std::setw(10) << std::fixed << std::setprecision(2) << f.price
+                  << std::setw(12) << f.status
+                  << "\n";
+    }
+    std::cout << std::string(140, '-') << "\n";
+}
+
+void MainMenu::searchFlightsUI() {
+    std::cout << "\n--- Search Flights ---\n";
+    const std::string origin = ConsoleIO::readLine("Enter Origin: ");
+    const std::string destination = ConsoleIO::readLine("Enter Destination: ");
+    const std::string departureDate = ConsoleIO::readLine("Enter Departure Date (YYYY-MM-DD): ");
+
+    const auto results = FlightSearchService::searchFlights(origin, destination, departureDate, m_flights);
+    printFlightsTable(results);
+}
+
 void MainMenu::showAgentMenu(const UserRecord& agentUser) {
     std::cout << "--- Booking Agent Menu ---\n";
 
@@ -324,7 +374,7 @@ void MainMenu::showAgentMenu(const UserRecord& agentUser) {
         const int choice = ConsoleIO::readIntInRange("Enter choice: ", 1, 5);
 
         if (choice == 1) {
-            std::cout << "\n[Search Flights - Not implemented yet]\n";
+            searchFlightsUI();
         } else if (choice == 2) {
             runBookingFlow(agentUser);
         } else if (choice == 3) {
